@@ -15,3 +15,9 @@ export function computeFleetStatus(prs: PullRequest[]): FleetStatus {
   const clearCount = prs.filter((pr) => pr.status === 'clear').length
   return { kind: 'result', clearCount, total: prs.length }
 }
+
+export function derivePRStatus(
+  verdicts: ('clear' | 'flagged')[],
+): 'clear' | 'flagged' {
+  return verdicts.every((v) => v === 'clear') ? 'clear' : 'flagged'
+}

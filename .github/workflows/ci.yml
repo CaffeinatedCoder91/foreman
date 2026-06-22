@@ -40,6 +40,7 @@ jobs:
         run: pnpm build
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          ANTHROPIC_WEBHOOK_SIGNING_KEY: ${{ secrets.ANTHROPIC_WEBHOOK_SIGNING_KEY }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           GITHUB_APP_ID: ${{ secrets.GITHUB_APP_ID }}
           GITHUB_APP_PRIVATE_KEY: ${{ secrets.GITHUB_APP_PRIVATE_KEY }}
