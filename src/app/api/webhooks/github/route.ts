@@ -1,3 +1,4 @@
+import { after } from 'next/server'
 import {
   getRepoByName,
   getPullRequestByNumber,
@@ -5,6 +6,7 @@ import {
   markPullRequestClosed,
 } from '../../../../lib/db/queries'
 import { verifyGitHubSignature } from '../../../../lib/github/verify-signature'
+import { triggerReview } from '../../../../lib/agents'
 
 export const runtime = 'nodejs'
 
@@ -52,7 +54,16 @@ export async function POST(request: Request): Promise<Response> {
       closedAt: null,
     })
 
-    // Return immediately — agent triggering is a later session's job
+    after(() => {
+      void triggerReview({
+        prNumber: pr.number,
+        repoOwner: repository.owner.login,
+        repoName: repository.name,
+        prTitle: pr.title,
+        headSha: pr.head.sha,
+      })
+    })
+
     return new Response('OK', { status: 200 })
   }
 

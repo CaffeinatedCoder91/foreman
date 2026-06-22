@@ -1,12 +1,21 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { createHmac } from 'crypto'
 
-// Mock the db queries module — hoisted before any imports
 vi.mock('../../../../lib/db/queries', () => ({
   getRepoByName: vi.fn(),
   getPullRequestByNumber: vi.fn(),
   upsertPullRequestFromWebhook: vi.fn(),
   markPullRequestClosed: vi.fn(),
+}))
+
+vi.mock('next/server', () => ({
+  after: vi.fn((task: unknown) => {
+    if (typeof task === 'function') task()
+  }),
+}))
+
+vi.mock('../../../../lib/agents', () => ({
+  triggerReview: vi.fn().mockResolvedValue('mock-session-id'),
 }))
 
 import { POST } from './route'
@@ -16,6 +25,8 @@ import {
   upsertPullRequestFromWebhook,
   markPullRequestClosed,
 } from '../../../../lib/db/queries'
+import { after } from 'next/server'
+import { triggerReview } from '../../../../lib/agents'
 
 const SECRET = 'test-webhook-secret'
 
@@ -66,22 +77,52 @@ const dbPR = {
 }
 
 beforeEach(() => {
-  // Reset call history AND implementations between tests
   vi.resetAllMocks()
   vi.stubEnv('GITHUB_WEBHOOK_SECRET', SECRET)
-  // Defaults: repo found, no existing PR, writes succeed
   vi.mocked(getRepoByName).mockResolvedValue(dbRepo)
   vi.mocked(getPullRequestByNumber).mockResolvedValue(undefined)
   vi.mocked(upsertPullRequestFromWebhook).mockResolvedValue({} as never)
   vi.mocked(markPullRequestClosed).mockResolvedValue({} as never)
+  vi.mocked(after).mockImplementation((task: unknown) => {
+    if (typeof task === 'function') task()
+  })
+  vi.mocked(triggerReview).mockResolvedValue('mock-session-id')
 })
 
 describe('POST /api/webhooks/github', () => {
-  it('accepts a request with a valid signature', async () => {
+  it('accepts a request with a valid signature and triggers a review', async () => {
     const req = makeRequest({ action: 'opened', pull_request: basePR, repository: baseRepo })
     const res = await POST(req)
     expect(res.status).toBe(200)
     expect(upsertPullRequestFromWebhook).toHaveBeenCalledOnce()
+    expect(triggerReview).toHaveBeenCalledOnce()
+    expect(triggerReview).toHaveBeenCalledWith({
+      prNumber: basePR.number,
+      repoOwner: baseRepo.owner.login,
+      repoName: baseRepo.name,
+      prTitle: basePR.title,
+      headSha: basePR.head.sha,
+    })
+  })
+
+  it('triggers a review on synchronize when the headSha is new', async () => {
+    const req = makeRequest({
+      action: 'synchronize',
+      pull_request: basePR,
+      repository: baseRepo,
+    })
+    const res = await POST(req)
+    expect(res.status).toBe(200)
+    expect(upsertPullRequestFromWebhook).toHaveBeenCalledOnce()
+    expect(triggerReview).toHaveBeenCalledOnce()
+  })
+
+  it('does not trigger a review on closed events', async () => {
+    vi.mocked(getPullRequestByNumber).mockResolvedValue(dbPR)
+    const req = makeRequest({ action: 'closed', pull_request: basePR, repository: baseRepo })
+    const res = await POST(req)
+    expect(res.status).toBe(200)
+    expect(triggerReview).not.toHaveBeenCalled()
   })
 
   it('rejects a request with an invalid signature with 401 and makes no DB calls', async () => {
