@@ -15,7 +15,8 @@
     "typecheck": "tsc --noEmit",
     "lhci": "lhci autorun",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate",
+    "db:migrate": "node --env-file=.env.local node_modules/.bin/drizzle-kit migrate",
+    "db:seed": "node --env-file=.env.local node_modules/.bin/tsx src/lib/db/seed.ts",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },
@@ -62,6 +63,7 @@
     "storybook": "^10.4.6",
     "typescript": "^5",
     "vite": "^8.0.16",
+    "tsx": "^4.22.4",
     "vitest": "^4.1.9"
   },
   "eslintConfig": {
