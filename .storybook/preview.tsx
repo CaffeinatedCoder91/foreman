@@ -1,14 +1,13 @@
 import React from 'react'
 import type { Preview } from '@storybook/nextjs-vite'
 import { ThemeProvider } from 'styled-components'
-
-const placeholderTheme = {}
+import { theme } from '../src/styles/theme'
 
 const preview: Preview = {
   parameters: {
     backgrounds: {
       default: 'foreman',
-      values: [{ name: 'foreman', value: '#D7DADF' }],
+      values: [{ name: 'foreman', value: theme.color.page }],
     },
     controls: {
       matchers: {
@@ -22,7 +21,7 @@ const preview: Preview = {
   },
   decorators: [
     (Story) => (
-      <ThemeProvider theme={placeholderTheme}>
+      <ThemeProvider theme={theme}>
         <Story />
       </ThemeProvider>
     ),
