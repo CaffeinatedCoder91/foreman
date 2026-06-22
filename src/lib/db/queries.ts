@@ -1,4 +1,4 @@
-import { eq, isNull, and } from 'drizzle-orm'
+import { eq, isNull, and, ne } from 'drizzle-orm'
 import { db } from './client'
 import { repos, pullRequests, specialistResults } from './schema'
 import type {
@@ -68,6 +68,46 @@ export async function setPullRequestStale(id: string, headSha: string): Promise<
   const [pr] = await db
     .update(pullRequests)
     .set({ status: 'stale', headSha })
+    .where(eq(pullRequests.id, id))
+    .returning()
+  return pr
+}
+
+export async function getPullRequestByNumber(
+  repoId: string,
+  number: number,
+): Promise<PullRequest | undefined> {
+  const [pr] = await db
+    .select()
+    .from(pullRequests)
+    .where(and(eq(pullRequests.repoId, repoId), eq(pullRequests.number, number)))
+  return pr
+}
+
+export async function upsertPullRequestFromWebhook(
+  repoId: string,
+  data: Omit<NewPullRequest, 'repoId'>,
+): Promise<PullRequest | undefined> {
+  const [pr] = await db
+    .insert(pullRequests)
+    .values({ repoId, ...data })
+    .onConflictDoUpdate({
+      target: [pullRequests.repoId, pullRequests.number],
+      set: {
+        headSha: data.headSha,
+        status: data.status,
+        title: data.title,
+      },
+      setWhere: ne(pullRequests.headSha, data.headSha),
+    })
+    .returning()
+  return pr
+}
+
+export async function markPullRequestClosed(id: string): Promise<PullRequest> {
+  const [pr] = await db
+    .update(pullRequests)
+    .set({ closedAt: new Date() })
     .where(eq(pullRequests.id, id))
     .returning()
   return pr

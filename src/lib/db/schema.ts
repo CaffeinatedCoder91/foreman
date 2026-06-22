@@ -5,15 +5,19 @@ export const prStatusEnum = pgEnum('pr_status', ['reviewing', 'clear', 'flagged'
 export const specialistTypeEnum = pgEnum('specialist_type', ['a11y', 'performance', 'security', 'tests'])
 export const verdictEnum = pgEnum('verdict', ['clear', 'flagged'])
 
-export const repos = pgTable('repos', {
-  id: text('id')
-    .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()),
-  owner: text('owner').notNull(),
-  name: text('name').notNull(),
-  githubInstallationId: text('github_installation_id').notNull(),
-  connectedAt: timestamp('connected_at', { withTimezone: true }).notNull().defaultNow(),
-})
+export const repos = pgTable(
+  'repos',
+  {
+    id: text('id')
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    owner: text('owner').notNull(),
+    name: text('name').notNull(),
+    githubInstallationId: text('github_installation_id').notNull(),
+    connectedAt: timestamp('connected_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [unique('repos_owner_name_unique').on(table.owner, table.name)],
+)
 
 export const pullRequests = pgTable(
   'pull_requests',
