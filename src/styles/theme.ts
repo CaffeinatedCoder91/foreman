@@ -6,6 +6,8 @@ export const theme = {
     inkMuted: '#6B7280',
     inkFaint: '#9197A1',
     border: 'rgba(27,32,39,0.07)',
+    borderMid: 'rgba(27,32,39,0.14)',
+    lockedBg: 'rgba(27,32,39,0.025)',
     accent: '#A8285C',
     accentLight: '#C13D74',
     accentSoft: 'rgba(168,40,92,0.10)',
