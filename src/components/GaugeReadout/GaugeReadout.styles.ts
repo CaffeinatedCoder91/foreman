@@ -68,12 +68,6 @@ export const TickRing = styled('circle')`
   opacity: 0.14;
 `
 
-export const TickMark = styled('line')`
-  stroke: ${({ theme }) => theme.color.ink};
-  stroke-width: 0.75;
-  opacity: 0.18;
-`
-
 export const PivotDot = styled('circle')`
   fill: ${({ theme }) => theme.color.ink};
 `

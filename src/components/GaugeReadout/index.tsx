@@ -7,7 +7,6 @@ import {
   SweepGroup,
   SweepNeedle,
   TickRing,
-  TickMark,
   PivotDot,
   LcdReadout,
   LcdDigits,
@@ -26,23 +25,6 @@ function computeLabel(clearCount: number, total: number): string {
   return `${flagged} needs attention`
 }
 
-const CENTER = 23.5
-const OUTER_R = 18
-const INNER_R = 15.5
-const TICK_COUNT = 8
-
-const ticks = Array.from({ length: TICK_COUNT }, (_, i) => {
-  const angle = (i * 2 * Math.PI) / TICK_COUNT
-  const s = Math.sin(angle)
-  const c = Math.cos(angle)
-  return {
-    x1: CENTER + OUTER_R * s,
-    y1: CENTER - OUTER_R * c,
-    x2: CENTER + INNER_R * s,
-    y2: CENTER - INNER_R * c,
-  }
-})
-
 const GaugeReadout = ({ clearCount, total }: GaugeReadoutProps) => {
   const label = computeLabel(clearCount, total)
   const digits = total === 0 ? '--' : `${clearCount}/${total}`
@@ -60,9 +42,6 @@ const GaugeReadout = ({ clearCount, total }: GaugeReadoutProps) => {
             aria-hidden="true"
           >
             <TickRing cx="23.5" cy="23.5" r="18" />
-            {ticks.map((t, i) => (
-              <TickMark key={i} x1={t.x1} y1={t.y1} x2={t.x2} y2={t.y2} />
-            ))}
             <SweepGroup>
               <SweepNeedle x1="23.5" y1="23.5" x2="23.5" y2="7" />
             </SweepGroup>
