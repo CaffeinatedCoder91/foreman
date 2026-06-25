@@ -1,4 +1,4 @@
-import { eq, isNull, and, ne } from 'drizzle-orm'
+import { eq, isNull, and, ne, desc } from 'drizzle-orm'
 import { db } from './client'
 import { repos, pullRequests, specialistResults } from './schema'
 import type {
@@ -34,7 +34,11 @@ export async function createRepo(data: NewRepo): Promise<Repo> {
 // ── Pull Requests ──────────────────────────────────────────────────────────
 
 export async function getOpenPullRequests(): Promise<PullRequest[]> {
-  return db.select().from(pullRequests).where(isNull(pullRequests.closedAt))
+  return db
+    .select()
+    .from(pullRequests)
+    .where(isNull(pullRequests.closedAt))
+    .orderBy(desc(pullRequests.openedAt))
 }
 
 export async function getPullRequestsByRepo(repoId: string): Promise<PullRequest[]> {
