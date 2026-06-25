@@ -18,15 +18,13 @@ interface GaugeReadoutProps {
   total: number
 }
 
-function computeLabel(clearCount: number, total: number): string {
+function computeLabel(total: number): string {
   if (total === 0) return 'nothing open'
-  if (clearCount === total) return 'all clear'
-  const flagged = total - clearCount
-  return `${flagged} needs attention`
+  return 'all clear'
 }
 
 const GaugeReadout = ({ clearCount, total }: GaugeReadoutProps) => {
-  const label = computeLabel(clearCount, total)
+  const label = computeLabel(total)
   const digits = total === 0 ? '--' : `${clearCount}/${total}`
 
   return (

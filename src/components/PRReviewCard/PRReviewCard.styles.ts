@@ -6,6 +6,7 @@ export const Card = styled.article<{ $stale?: boolean }>`
   border: 1px solid ${({ theme }) => theme.color.border};
   border-radius: ${({ theme }) => theme.radius.sm};
   padding: 13px 14px;
+  margin-bottom: 8px;
   box-shadow: ${({ theme }) => theme.shadow.card};
   ${({ $stale }) => $stale && css`opacity: 0.5;`}
 `

@@ -1,7 +1,5 @@
+import Dashboard from '@/components/Dashboard'
+
 export default function Home() {
-  return (
-    <main>
-      <p>Foreman — coming soon</p>
-    </main>
-  );
+  return <Dashboard />
 }

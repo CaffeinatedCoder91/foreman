@@ -10,6 +10,7 @@ export const LockedRow = styled.div`
   border: 1px dashed ${({ theme }) => theme.color.borderMid};
   border-radius: ${({ theme }) => theme.radius.sm};
   padding: 12px 14px;
+  margin-bottom: 8px;
 `
 
 export const LockedLeft = styled.div`
