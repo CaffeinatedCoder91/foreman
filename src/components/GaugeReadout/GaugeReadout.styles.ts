@@ -10,6 +10,7 @@ export const GaugeWrap = styled.div`
   display: flex;
   align-items: center;
   gap: 11px;
+  flex: 0 0 auto;
 `
 
 export const GaugeHousing = styled.div`

@@ -8,7 +8,14 @@ export const Card = styled.article<{ $stale?: boolean }>`
   padding: 13px 14px;
   margin-bottom: 8px;
   box-shadow: ${({ theme }) => theme.shadow.card};
-  ${({ $stale }) => $stale && css`opacity: 0.5;`}
+  ${({ $stale, theme }) =>
+    $stale &&
+    css`
+      background: ${theme.color.lockedBg};
+      border-color: ${theme.color.borderMid};
+      border-style: dashed;
+      box-shadow: none;
+    `}
 `
 
 export const CardTop = styled.div`

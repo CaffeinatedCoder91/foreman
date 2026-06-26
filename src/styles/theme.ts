@@ -3,8 +3,10 @@ export const theme = {
     page: '#D7DADF',
     panel: '#EEF0F3',
     ink: '#1B2027',
-    inkMuted: '#6B7280',
-    inkFaint: '#9197A1',
+    // WCAG AA small-text contrast: 4.80:1 on page, 5.64:1 on locked rows.
+    inkMuted: '#565C66',
+    // WCAG AA small-text contrast: 4.52:1 on page, 5.30:1 on locked rows.
+    inkFaint: '#59606C',
     border: 'rgba(27,32,39,0.07)',
     borderMid: 'rgba(27,32,39,0.14)',
     lockedBg: 'rgba(27,32,39,0.025)',
@@ -19,7 +21,8 @@ export const theme = {
       clearBg: 'rgba(46,143,125,0.12)',
       clearFg: '#1F7561',
       flaggedBg: 'rgba(184,130,31,0.14)',
-      flaggedFg: '#8C6315',
+      // WCAG AA small-text contrast: at least 4.75:1 on the tinted badge surfaces.
+      flaggedFg: '#805A10',
     },
   },
   gradient: {
